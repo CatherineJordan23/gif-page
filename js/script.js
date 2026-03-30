@@ -1,21 +1,31 @@
 console.log("script.js loaded");
 
-let endpoint = "https://api.giphy.com/v1/gifs/search?api_key=HnUhD6u2Wm6pZ6fDLZD4Hoj22DFCtSnX&q=gif&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips"
-
+let endpoint = "https://api.giphy.com/v1/gifs/search?api_key=Kevwt8hwkdN6d0kAJRdgpGWI5n369wIV&q=funny&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips"
+let gifContainer = document.querySelector("#gif-container");
+let button = document.querySelector("#fetch-gif-btn");
 let images = [];
 
-fetch(endpoint)
-.then(function(response) {
-    return response.json();
-})
+async function fetchGifs() {
+  try {
+    let response = await fetch(endpoint);
+    let data = await response.json();
 
-.then(function(data) {
-    // data.data is an array of GIF objects
-    images = data.data.map(function(gif) {
-        return gif.images.original.url;
-    });
+    images = data.data.map(gif => gif.images.original.url);
+
     console.log(images);
-})
-.catch(function(error) {
+  } catch (error) {
     console.log("Error:", error);
+  }
+}
+
+button.addEventListener("click", async function () {
+  gifContainer.innerHTML = ""; // clears old gifs
+
+  await fetchGifs();
+
+  images.forEach(function(url) {
+    gifContainer.innerHTML += `
+      <img src="${url}" class="col-3 mb-3">
+    `;
+  });
 });
